@@ -25,6 +25,6 @@ void transcoder_send_packet(enum TCPacketType packetType, uint8_t* packetData, i
 void transcoder_send_packet(enum TCPacketType packetType, uint8_t packetData);
 void transcoder_send_frame(camera_fb_t* frame);
 void transcoder_send_event_alarm(void);
-void transcoder_send_face_detection(uint32_t tl, uint32_t tr, uint32_t bl, uint32_t br);
+void transcoder_send_face_detection(float tl_x, float tl_y, float br_x, float br_y);
 
 #endif

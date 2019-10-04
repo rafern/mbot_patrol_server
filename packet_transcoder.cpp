@@ -62,12 +62,12 @@ void transcoder_send_event_alarm() {
   transcoder_send_packet(TCEvent, (uint8_t)TCAlarmEvent);
 }
 
-void transcoder_send_face_detection(uint32_t tl, uint32_t tr, uint32_t bl, uint32_t br) {
+void transcoder_send_face_detection(float tl_x, float tl_y, float br_x, float br_y) {
   uint8_t pointBuffer[16];
-  encode_le_uint32(tl, pointBuffer     );
-  encode_le_uint32(tr, pointBuffer + 4 );
-  encode_le_uint32(bl, pointBuffer + 8 );
-  encode_le_uint32(br, pointBuffer + 12);
+  encode_le_uint32((uint32_t)tl_x, pointBuffer     );
+  encode_le_uint32((uint32_t)tl_y, pointBuffer + 4 );
+  encode_le_uint32((uint32_t)br_x, pointBuffer + 8 );
+  encode_le_uint32((uint32_t)br_y, pointBuffer + 12);
   
   transcoder_send_packet(TCFace, pointBuffer, 16);
 }

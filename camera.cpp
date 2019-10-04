@@ -54,10 +54,10 @@ static camera_config_t camera_config = {
 
 void camera_init() {
   //power up the camera if PWDN pin is defined
-  if(CAM_PIN_PWDN != -1) {
+  /*if(CAM_PIN_PWDN != -1) {
     pinMode(CAM_PIN_PWDN, OUTPUT);
     digitalWrite(CAM_PIN_PWDN, LOW);
-  }
+  }*/
 
   //initialize the camera
   esp_err_t err = esp_camera_init(&camera_config);
@@ -65,5 +65,13 @@ void camera_init() {
     log_e("Camera FAILED");
     exit(0);
   }
+  sensor_t * s = esp_camera_sensor_get();
+  //initial sensors are flipped vertically and colors are a bit saturated
+  if (s->id.PID == OV3660_PID) {
+    s->set_vflip(s, 1);//flip it back
+    s->set_brightness(s, 1);//up the blightness just a bit
+    s->set_saturation(s, -2);//lower the saturation
+  }
+  
   log_i("Camera OK");
 }
