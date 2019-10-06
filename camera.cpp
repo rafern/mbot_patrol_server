@@ -1,63 +1,58 @@
 #include "Arduino.h"
 #include "camera.h"
 
-//AI THINKER PIN Map
+//AI THINKER pin map
 //Found in the Camera example's camera_pins.h
-#define CAM_PIN_PWDN    32
-#define CAM_PIN_RESET   -1
-#define CAM_PIN_XCLK     0
-#define CAM_PIN_SIOD    26
-#define CAM_PIN_SIOC    27
+#define PWDN_GPIO_NUM     32
+#define RESET_GPIO_NUM    -1
+#define XCLK_GPIO_NUM      0
+#define SIOD_GPIO_NUM     26
+#define SIOC_GPIO_NUM     27
 
-#define CAM_PIN_D7      35
-#define CAM_PIN_D6      34
-#define CAM_PIN_D5      39
-#define CAM_PIN_D4      36
-#define CAM_PIN_D3      21
-#define CAM_PIN_D2      19
-#define CAM_PIN_D1      18
-#define CAM_PIN_D0       5
-#define CAM_PIN_VSYNC   25
-#define CAM_PIN_HREF    23
-#define CAM_PIN_PCLK    22
+#define Y9_GPIO_NUM       35
+#define Y8_GPIO_NUM       34
+#define Y7_GPIO_NUM       39
+#define Y6_GPIO_NUM       36
+#define Y5_GPIO_NUM       21
+#define Y4_GPIO_NUM       19
+#define Y3_GPIO_NUM       18
+#define Y2_GPIO_NUM        5
+#define VSYNC_GPIO_NUM    25
+#define HREF_GPIO_NUM     23
+#define PCLK_GPIO_NUM     22
 
-static camera_config_t camera_config = {
-  .pin_pwdn  = CAM_PIN_PWDN,
-  .pin_reset = CAM_PIN_RESET,
-  .pin_xclk = CAM_PIN_XCLK,
-  .pin_sscb_sda = CAM_PIN_SIOD,
-  .pin_sscb_scl = CAM_PIN_SIOC,
-
-  .pin_d7 = CAM_PIN_D7,
-  .pin_d6 = CAM_PIN_D6,
-  .pin_d5 = CAM_PIN_D5,
-  .pin_d4 = CAM_PIN_D4,
-  .pin_d3 = CAM_PIN_D3,
-  .pin_d2 = CAM_PIN_D2,
-  .pin_d1 = CAM_PIN_D1,
-  .pin_d0 = CAM_PIN_D0,
-  .pin_vsync = CAM_PIN_VSYNC,
-  .pin_href = CAM_PIN_HREF,
-  .pin_pclk = CAM_PIN_PCLK,
-
-  //XCLK 20MHz or 10MHz for OV2640 double FPS (Experimental)
-  .xclk_freq_hz = 20000000,
-  .ledc_timer = LEDC_TIMER_0,
-  .ledc_channel = LEDC_CHANNEL_0,
-
-  .pixel_format = PIXFORMAT_JPEG,//YUV422,GRAYSCALE,RGB565,JPEG
-  .frame_size = FRAMESIZE_VGA,//QQVGA-QXGA Do not use sizes above QVGA when not JPEG
-
-  .jpeg_quality = 12, //0-63 lower number means higher quality
-  .fb_count = 1 //if more than one, i2s runs in continuous mode. Use only with JPEG
-};
+static camera_config_t camera_config = {0};
 
 void camera_init() {
-  //power up the camera if PWDN pin is defined
-  /*if(CAM_PIN_PWDN != -1) {
-    pinMode(CAM_PIN_PWDN, OUTPUT);
-    digitalWrite(CAM_PIN_PWDN, LOW);
-  }*/
+  // Setup pin map
+  camera_config.ledc_channel = LEDC_CHANNEL_0;
+  camera_config.ledc_timer = LEDC_TIMER_0;
+  camera_config.pin_d0 = Y2_GPIO_NUM;
+  camera_config.pin_d1 = Y3_GPIO_NUM;
+  camera_config.pin_d2 = Y4_GPIO_NUM;
+  camera_config.pin_d3 = Y5_GPIO_NUM;
+  camera_config.pin_d4 = Y6_GPIO_NUM;
+  camera_config.pin_d5 = Y7_GPIO_NUM;
+  camera_config.pin_d6 = Y8_GPIO_NUM;
+  camera_config.pin_d7 = Y9_GPIO_NUM;
+  camera_config.pin_xclk = XCLK_GPIO_NUM;
+  camera_config.pin_pclk = PCLK_GPIO_NUM;
+  camera_config.pin_vsync = VSYNC_GPIO_NUM;
+  camera_config.pin_href = HREF_GPIO_NUM;
+  camera_config.pin_sscb_sda = SIOD_GPIO_NUM;
+  camera_config.pin_sscb_scl = SIOC_GPIO_NUM;
+  camera_config.pin_pwdn = PWDN_GPIO_NUM;
+  camera_config.pin_reset = RESET_GPIO_NUM;
+  camera_config.xclk_freq_hz = 20000000;
+  camera_config.pixel_format = PIXFORMAT_JPEG;
+  camera_config.frame_size = FRAMESIZE_QVGA;
+  camera_config.jpeg_quality = 12;
+  camera_config.fb_count = 1;
+  
+  // Camera reboot fix. Powers down the camera for 10 ms to reset it
+  // since there is no reset pin on the OV2640
+  gpio_set_level((gpio_num_t)camera_config.pin_pwdn, 1);
+  delay(10);
 
   //initialize the camera
   esp_err_t err = esp_camera_init(&camera_config);
