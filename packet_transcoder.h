@@ -16,13 +16,23 @@ enum TCPacketType {
 enum TCEventType {
   TCUnknownEvent = 0,
   TCAlarmOnEvent = 'A',
-  TCAlarmOffEvent = 'a'
+  TCAlarmOffEvent = 'a',
+  TCRCOnEvent = 'C',
+  TCRCOffEvent = 'c'
 };
 
 enum TCCommandType {
   TCUnknownCommand = 255,
-  TCAlarmOnCommand = 0,
-  TCAlarmOffCommand = 1
+  TCGetStateCommand = 0,
+  TCAlarmOnCommand = 1,
+  TCAlarmOffCommand = 2,
+  TCRCOnCommand = 3,
+  TCRCOffCommand = 4,
+  TCLeftCommand = 5,
+  TCRightCommand = 6,
+  TCForwardsCommand = 7,
+  TCBackwardsCommand = 8,
+  TCStopCommand = 9
 };
 
 struct TCPacket {

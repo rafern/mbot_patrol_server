@@ -20,9 +20,9 @@ void encode_le_uint32(uint32_t integer, uint8_t* buffer) {
 
 uint32_t decode_le_uint32(uint8_t* buffer) {
   return (uint32_t)buffer[3]
-       + (uint32_t)buffer[2] << 8
-       + (uint32_t)buffer[1] << 16
-       + (uint32_t)buffer[0] << 24;
+       | (uint32_t)buffer[2] << 8
+       | (uint32_t)buffer[1] << 16
+       | (uint32_t)buffer[0] << 24;
 }
 
 void transcoder_init() {
@@ -161,7 +161,8 @@ TCPacket* transcoder_receive_packet(void) {
         readHeaderBufferSize = 0;
 
         // Try to get the rest of the packet
-        return transcoder_receive_packet();
+        if(readPacket)
+          return transcoder_receive_packet();
       }
     }
   }
